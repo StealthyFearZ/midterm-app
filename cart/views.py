@@ -49,7 +49,7 @@ def purchase(request):
         item.price = movie.price
         item.order = order
         item.quantity = cart[str(movie.id)]
-        movie.numorders += item.quantity
+        Movie.objects.all().filter(id=movie.id).update(numorders=movie.numorders + int(item.quantity))
         item.save()
     request.session['cart'] = {}
     template_data = {}
