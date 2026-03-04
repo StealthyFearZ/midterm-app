@@ -6,8 +6,10 @@ class Movie(models.Model):
     price = models.IntegerField()
     description = models.TextField()
     image = models.ImageField(upload_to='movie_images/')
+    numorders = models.IntegerField(db_default=0)
+    numreviews = models.IntegerField(db_default=0)
     def __str__(self):
-        return str(self.id) + ' - ' + self.name
+        return str(self.id) + ' - ' + self.name + ' | number of orders: ' + self.numorders + ' | number of reviews: ' + self.numreviews
     
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
