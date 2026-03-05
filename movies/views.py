@@ -37,6 +37,7 @@ def create_review(request, id):
         review.comment = request.POST['comment']
         review.movie = movie
         review.user = request.user
+        movie.update(numreviews=movie.numreviews + 1)
         review.save()
         return redirect('movies.show', id=id)
     else:
