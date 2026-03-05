@@ -39,9 +39,9 @@ def create_review(request, id):
         review.user = request.user
         # Add 1  to numReviews of for each purchase
         Movie.objects.all().filter(id=movie.id).update(numreviews=movie.numreviews + 1)
-        isrev = Movie.objects.all().order_by('-numreviews'). # == movie.numreviews
-        #Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
-        Movie.objects.all().filter(id=movie.id).update(mostreviews= isrev)
+        toprev = Movie.objects.all().order_by('numreviews').last()
+        isrev = (toprev.numreviews == movie.numreviews + 1)
+        Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
         review.save()
         return redirect('movies.show', id=id)
     else:
@@ -72,6 +72,9 @@ def delete_review(request, id, review_id):
     # Add 1  to numReviews of for each purchase
     movie = Movie.objects.get(id=id)
     Movie.objects.all().filter(id=id).update(numreviews=movie.numreviews - 1)
+    toprev = Movie.objects.all().order_by('numreviews').last()
+    isrev = (toprev.numreviews == movie.numreviews - 1)
+    Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
     review.delete()
     return redirect('movies.show', id=id)
 
