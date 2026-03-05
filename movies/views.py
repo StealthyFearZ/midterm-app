@@ -37,7 +37,11 @@ def create_review(request, id):
         review.comment = request.POST['comment']
         review.movie = movie
         review.user = request.user
-        movie.update(numreviews=movie.numreviews + 1)
+        # Add 1  to numReviews of for each purchase
+        Movie.objects.all().filter(id=movie.id).update(numreviews=movie.numreviews + 1)
+        isrev = Movie.objects.all().order_by('-numreviews'). # == movie.numreviews
+        #Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
+        Movie.objects.all().filter(id=movie.id).update(mostreviews= isrev)
         review.save()
         return redirect('movies.show', id=id)
     else:
@@ -65,6 +69,9 @@ def edit_review(request, id, review_id):
 @login_required
 def delete_review(request, id, review_id):
     review = get_object_or_404(Review, id=review_id, user=request.user)
+    # Add 1  to numReviews of for each purchase
+    movie = Movie.objects.get(id=id)
+    Movie.objects.all().filter(id=id).update(numreviews=movie.numreviews - 1)
     review.delete()
     return redirect('movies.show', id=id)
 

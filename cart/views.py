@@ -49,7 +49,10 @@ def purchase(request):
         item.price = movie.price
         item.order = order
         item.quantity = cart[str(movie.id)]
+        # Add quantity of purchase to numOrders of movie
         Movie.objects.all().filter(id=movie.id).update(numorders=movie.numorders + int(item.quantity))
+        isord = Movie.objects.all().order_by('-numorders') == movie.numorders
+        Movie.objects.all().filter(id=movie.id).update(mostorders="Yes" if isord else "No")
         item.save()
     request.session['cart'] = {}
     template_data = {}

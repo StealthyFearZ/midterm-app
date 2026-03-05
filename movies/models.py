@@ -6,10 +6,16 @@ class Movie(models.Model):
     price = models.IntegerField()
     description = models.TextField()
     image = models.ImageField(upload_to='movie_images/')
+    # The number of orders/reviews a movie has
     numorders = models.IntegerField(db_default=0)
     numreviews = models.IntegerField(db_default=0)
+    
+    # Displays Y/N if movie has the most orders/reviews
+    mostorders =  models.CharField(max_length=10, db_default="No")
+    mostreviews = models.CharField(max_length=10, db_default="No")
+
     def __str__(self):
-        return str(self.id) + ' - ' + self.name + ' | number of orders: ' + str(self.numorders) + ' | number of reviews: ' + str(self.numreviews)
+        return str(self.id) + ' - ' + self.name + ' | Number of orders: ' + str(self.numorders) + ' | Number of reviews: ' + str(self.numreviews) + ' | Has most orders: ' + self.mostorders + ' | Has most reviews: ' + self.mostreviews
     
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
