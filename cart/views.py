@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 from movies.models import Movie
 from .utils import calculate_cart_total
 from .models import Order, Item
+from topbuyers.models import Top_Buyer
 from django.contrib.auth.decorators import login_required
 
 def index(request):
@@ -43,6 +44,7 @@ def purchase(request):
     order.user = request.user
     order.total = cart_total
     order.save()
+    total_purchases = 0 # counter for total user purchases 
     for movie in movies_in_cart:
         item = Item()
         item.movie = movie
@@ -54,7 +56,15 @@ def purchase(request):
         topord = Movie.objects.all().order_by('numorders').last()
         isord = (topord.numorders == movie.numorders + int(item.quantity))
         Movie.objects.all().filter(id=movie.id).update(mostorders= "Yes" if isord else "No")
+        total_purchases += int(item.quantity)
         item.save()
+
+    buyer, booleanCheck = Top_Buyer.objects.get_or_create(user=request.user)
+    Top_Buyer.objects.all().filter(user=request.user).update(numPurchased= buyer.numPurchased + total_purchases)
+    Top_Buyer.objects.all().update(mostPurchased=False)
+    topuser = Top_Buyer.objects.all().order_by('numPurchased').last() # the most purchased user would be ascendingly at the bottom of the list
+    if topuser:
+        Top_Buyer.objects.all().filter(id=topuser.id).update(mostPurchased=True)
     request.session['cart'] = {}
     template_data = {}
     template_data['title'] = 'Purchase confirmation'
