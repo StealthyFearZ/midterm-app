@@ -30,6 +30,43 @@
             </div>
           </form>
         </p>
+
+        <!-- Add Rating Section Here -->
+        <h2>Ratings</h2>
+        <hr />
+        <form method="POST" action="{% url 'rate_movie' template_data.movie.id %}">
+            {% csrf_token %}
+        <!-- Thumbs Up Button-->
+
+        <button name="vote" value="up" class="btn {% if template_data.user_rating.vote == 'up' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          <!-- Add Thumbs Up Icon here-->
+          <i class="fa-regular fa-thumbs-up"></i>
+        </button> 
+
+        <!-- Thumbs Down Button-->
+        <button name="vote" value="down" class="btn {% if template_data.user_rating.vote == 'down' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+          <!-- Add Thumbs Up Icon here-->
+           <i class="fa-regular fa-thumbs-down"></i>
+        </button> 
+
+        <!-- Display current votes -->
+        <p>
+          <span class="me-3"><i class="fa-regular fa-thumbs-up"></i> {{ template_data.ratings.thumbs_up }}</span>
+
+          <span><i class="fa-regular fa-thumbs-down"></i> {{ template_data.ratings.thumbs_down }}</span>
+        </p>
+
+        <!-- Display Average votes -->
+        {% if template_data.approval is not None %}
+          <p>Approval Rating: {{ template_data.approval }}%</p>
+        {% else %}
+          <p> No ratings yet...</p>
+        {% endif %}
+
+        </form>
+
+        <p> </p>
+
         <h2>Reviews</h2>
         <hr />
         <ul class="list-group">

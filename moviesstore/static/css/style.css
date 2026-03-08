@@ -38,3 +38,6 @@
   width: fit-content;
   max-height: 400px;
 }
+button.active i{
+  color:blue;
+}

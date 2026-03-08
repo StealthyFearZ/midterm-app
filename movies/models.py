@@ -37,11 +37,11 @@ class Report(models.Model):
 class Rating(models.Model):
     THUMBS_UP = 'up'
     THUMBS_DOWN = 'down'
-    VOTE_CHOICES = [(THUMBS_UP, 'Thumbs Up'), (THUMBS_DOWN, ['Thumbs Down'])]
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    VOTE_CHOICES = [(THUMBS_UP, 'Thumbs Up'), (THUMBS_DOWN, 'Thumbs Down')]
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     vote = models.CharField(max_length=4, choices=VOTE_CHOICES)
 
-    # Add way to make sure that user can vote only once
+    # The movie / user must be unique AKA.. User can only vote once per movie!
     class Meta:
         unique_together = ('movie', 'user')
