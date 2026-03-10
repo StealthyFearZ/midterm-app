@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from cart.models import Order
 from .models import Movie, Review, Report
 from django.contrib.auth.decorators import login_required
+from django.core.serializers import serialize
+from django.http import JsonResponse
 
 def index(request):
     search_term = request.GET.get('search')
@@ -28,6 +32,17 @@ def show(request, id):
     template_data['user_reported'] = user_reported
     return render(request, 'movies/show.html',
                   {'template_data': template_data})
+
+@login_required
+def map(request):
+    movies = Movie.objects.all()
+    orders = Order.objects.all()
+    template_data = {}
+    template_data['title'] = 'Local Popularity Map'
+    template_data['movies'] = movies
+    template_data['orders'] = orders
+    return render(request, 'movies/map.html',
+                  {"orders_json": serialize("json", orders), 'template_data': template_data})
 
 @login_required
 def create_review(request, id):
