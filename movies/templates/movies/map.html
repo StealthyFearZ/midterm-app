@@ -38,6 +38,13 @@
     // Generate javascript object using JSON orders list
     const orders = JSON.parse('{{ orders_json|escapejs }}');
 
+    // Test code for accessing orders and their regions
+    orders.forEach((element, index) => {
+        region = element.fields.region
+        console.log(region);
+        console.log(index)
+    });
+
 </script>
 
 {% endblock content %}
