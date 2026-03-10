@@ -33,11 +33,11 @@ def login(request):
 def signup(request):
     template_data = {}
     template_data['title'] = 'Sign Up'
-    if request.method == 'GET':
+    if request.method == 'GET':     # Serve signup page to the user
         template_data['form'] = CustomUserCreationForm()
         return render(request, 'accounts/signup.html',
             {'template_data': template_data})
-    elif request.method == 'POST':
+    elif request.method == 'POST':  # Save results of signup form and create new user
         form = CustomUserCreationForm(request.POST, error_class=CustomErrorList)
         if form.is_valid():
             form.save()
