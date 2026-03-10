@@ -31,12 +31,10 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    /*
     // Test marker
     var marker = L.marker([33.774841, -84.396407]).addTo(map); // Location of CS2340 classroom
     marker.bindPopup("<b>The Dark Knight</b><br>25 sales")
-
-    // Generate javascript object using JSON orders list
-    const orders = JSON.parse('{{ orders_json|escapejs }}');
 
     // Test code for accessing orders and their regions
     orders.forEach((element, index) => {
@@ -44,6 +42,10 @@
         console.log(region);
         console.log(index)
     });
+    */
+
+    // Generate javascript object using JSON orders list
+    const orders = JSON.parse('{{ orders_json|escapejs }}');
 
     // Coordinates for region markers
     var region_coords = {
