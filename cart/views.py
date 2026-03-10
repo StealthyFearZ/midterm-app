@@ -44,6 +44,16 @@ def purchase(request):
     order = Order()
     order.user = request.user
     order.total = cart_total
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')  # request client IP
+    # if request returned a valid list of IPs
+    if x_forwarded_for:
+        order.ip = x_forwarded_for.split(',')[0]
+    # sometimes, above request will come back empty (ex. when server is locally hosted)
+    else:
+        # thus use the following
+        order.ip = request.META.get('REMOTE_ADDR')
+
     order.save()
     for movie in movies_in_cart:
         item = Item()
