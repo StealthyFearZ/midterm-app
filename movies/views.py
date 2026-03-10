@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Movie, Review, Report, Rating
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from topcommenters.models import Top_Commenter
+from django.contrib.auth.models import User
 
 def index(request):
     search_term = request.GET.get('search')
@@ -65,6 +67,7 @@ def create_review(request, id):
         isrev = (toprev.numreviews == movie.numreviews + 1) # type: ignore
         Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
         review.save()
+        recalculate_commenters()
         return redirect('movies.show', id=id)
     else:
         return redirect('movies.show', id=id)
@@ -98,6 +101,7 @@ def delete_review(request, id, review_id):
     isrev = (toprev.numreviews == movie.numreviews - 1) # type: ignore
     Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
     review.delete()
+    recalculate_commenters()
     return redirect('movies.show', id=id)
 
 @login_required
@@ -123,3 +127,15 @@ def rate_movie(request, id):
             )
             print(f"Rating Saved {rating.vote}, created: {created}")
     return redirect('movies.show', id=id)
+
+def recalculate_commenters(): # reuse with create and delete review
+    for userx in User.objects.all():
+        commenter, booleanCheck = Top_Commenter.objects.get_or_create(user=userx)
+
+        total_reviews = Review.objects.filter(user=userx).count()
+        Top_Commenter.objects.all().filter(user=userx).update(numComments=total_reviews)
+
+    Top_Commenter.objects.all().update(mostComments=False)
+    topuser = Top_Commenter.objects.all().order_by('numComments').last() # ascending, so get last val
+    if topuser:
+        Top_Commenter.objects.all().filter(id=topuser.id).update(mostComments=True)
