@@ -65,6 +65,8 @@ def create_review(request, id):
         Movie.objects.all().filter(id=movie.id).update(numreviews=movie.numreviews + 1)
         toprev = Movie.objects.all().order_by('numreviews').last()
         isrev = (toprev.numreviews == movie.numreviews + 1) # type: ignore
+        if isrev:
+            Movie.objects.all().update(mostreviews= "No")
         Movie.objects.all().filter(id=movie.id).update(mostreviews= "Yes" if isrev else "No")
         review.save()
         recalculate_commenters()

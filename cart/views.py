@@ -55,6 +55,8 @@ def purchase(request):
         Movie.objects.all().filter(id=movie.id).update(numorders=movie.numorders + int(item.quantity))
         topord = Movie.objects.all().order_by('numorders').last()
         isord = (topord.numorders == movie.numorders + int(item.quantity))
+        if isord:
+            Movie.objects.all().update(mostorders= "No")        
         Movie.objects.all().filter(id=movie.id).update(mostorders= "Yes" if isord else "No")
         item.save()
 
