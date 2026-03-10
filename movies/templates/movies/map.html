@@ -50,11 +50,16 @@
         "AF": [12.68142033751721, 20.268198669475503],  // Africa
         "AN": [-76.08582128335182, 21.94560590743792],  // Antarctica
         "AS": [47.55395811991787, 87.2904497271196],    // Asia
-        "EU": [50.06943155378032, 12.83065473024489],   // Europe
+        "EU": [49.34737928105602, 12.825760986560464],  // Europe
         "NA": [39.62147416716466, -99.74048417383642],  // North America
         "OC": [-25.83732014300033, 141.23997363375128], // Oceania
         "SA": [-13.929939704940162, -59.82793422575491] // South America
     };
+
+    for (var region in region_coords) {
+        var marker = L.marker(region_coords[region]).addTo(map);
+        marker.bindPopup("<b>Trending Movies:</b><br>The Dark Knight - 25 sales")
+    }
 
 </script>
 
