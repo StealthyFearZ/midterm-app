@@ -105,7 +105,17 @@
 
     for (var region in region_coords) {
         var marker = L.marker(region_coords[region]).addTo(map);
-        marker.bindPopup("<b>Trending Movies:</b><br>The Dark Knight - 25 sales")
+        var topmovie1 = trending_movies[region]["topmovie1"];
+        var topmovie2 = trending_movies[region]["topmovie2"];
+
+        if (topmovie1[0] == null) {
+            marker.bindPopup("<b>No movies sold here yet!</b>");
+        } else if (topmovie2[0] == null) {
+            marker.bindPopup(`<b>Trending Movies:</b><br>${topmovie1[0]} - sales`);
+        } else {
+            marker.bindPopup(`<b>Trending Movies:</b><br>${topmovie1[0]} - ${topmovie1[1]} sales<br>${topmovie2[0]} - ${topmovie2[1]} sales`);
+        }
+        
     }
 
 </script>
