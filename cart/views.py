@@ -53,12 +53,16 @@ def purchase(request):
         item.quantity = cart[str(movie.id)]
         # Add quantity of purchase to numOrders of movie
         Movie.objects.all().filter(id=movie.id).update(numorders=movie.numorders + int(item.quantity))
-        topord = Movie.objects.all().order_by('numorders').last()
-        isord = (topord.numorders == movie.numorders + int(item.quantity))
-        if isord:
-            Movie.objects.all().update(mostorders= "No")        
-        Movie.objects.all().filter(id=movie.id).update(mostorders= "Yes" if isord else "No")
         item.save()
+
+    topord = Movie.objects.all().order_by('-numorders').first()
+
+    for moviex in Movie.objects.all():
+        isord = (topord.numorders == moviex.numorders)
+        if isord:
+            Movie.objects.all().filter(id=moviex.id).update(mostorders= "Yes")      
+        else:
+            Movie.objects.all().filter(id=moviex.id).update(mostorders= "No")    
 
     for userx in User.objects.all():
         buyer, booleanCheck = Top_Buyer.objects.get_or_create(user=userx)
@@ -67,7 +71,6 @@ def purchase(request):
         total_purchased = 0
         for item in all_items:
             total_purchased += item.quantity
-        
         Top_Buyer.objects.all().filter(user=userx).update(numPurchased=total_purchased)
 
     Top_Buyer.objects.all().update(mostPurchased=False)
