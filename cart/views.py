@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from movies.models import Movie
+from moviesstore import settings
 from .utils import calculate_cart_total
 from .models import Order, Item
 from django.contrib.auth.models import User
 from topbuyers.models import Top_Buyer
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.geoip2 import GeoIP2
 
 def index(request):
     cart_total = 0
@@ -45,12 +47,33 @@ def purchase(request):
     order.user = request.user
     order.total = cart_total
     order.save()
+
+    # get user IP
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')  # request client IP
+    # if request returned a valid list of IPs
+    if x_forwarded_for:
+        userIP = x_forwarded_for.split(',')[0]
+    # sometimes, above request will come back empty (ex. when server is locally hosted)
+    else:
+        # thus use the following - returns localhost
+        userIP = request.META.get('REMOTE_ADDR')
+    
+    # get continent code from IP
+    # database file for geo data is GeoLite2-City.mmdb, in base directory (update path if moved)
+    try:
+        userRegion = GeoIP2(path=settings.BASE_DIR).city(order.ip)['continent_code']
+    except:     # when developing locally, localhost will not be within the geo database
+        userRegion = "NA" # North America
+
     for movie in movies_in_cart:
         item = Item()
         item.movie = movie
         item.price = movie.price
         item.order = order
         item.quantity = cart[str(movie.id)]
+        # assign previously resolved ip and region info to items in the order
+        item.ip = userIP
+        item.region = userRegion
         # Add quantity of purchase to numOrders of movie
         Movie.objects.all().filter(id=movie.id).update(numorders=movie.numorders + int(item.quantity))
         item.save()

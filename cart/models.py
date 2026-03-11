@@ -19,5 +19,7 @@ class Item(models.Model):
         on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie,
         on_delete=models.CASCADE)
+    ip = models.GenericIPAddressField(default='0.0.0.0')
+    region = models.CharField(max_length=255, default="NA") # NA = North America
     def __str__(self):
         return str(self.id) + ' - ' + self.movie.name 
