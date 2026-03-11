@@ -50,7 +50,7 @@
     */
     
 
-    // TODO: Create dictionary to hold trending movies for each region
+    // Create dictionary to hold trending movies for each region
     // topmovies will hold arrays of [moviename, numsales] for the most sold movies in the region
     var trending_movies = {
         "AF": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},  // Africa
@@ -62,7 +62,7 @@
         "SA": {"topmovie1": [null, 0],  "topmovie2": [null, 0]} // South America
     };
 
-    // TODO: For each value in this dictionary, create a nested dict which iterates over movies
+    // For each value in this dictionary, create a nested dict which iterates over movies
     // and uses them as keys. Initial values all zero. Also has a key for top movie1 and 2.
     for (var region in trending_movies) {
         movies.forEach(movie => {
@@ -70,7 +70,7 @@
         });
     }
 
-    // TODO: Iterate over the items, access the region -> movie and add 1 to that nested value
+    // Iterate over the items, access the region -> movie and add 1 to that nested value
     items.forEach(item => {
         region = item.fields.region;
         movieName = movies[item.fields.movie - 1].fields.name;
