@@ -31,21 +31,66 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    
+    // Generate javascript objects using JSON lists passed in through movies/views.py
+    const movies = JSON.parse('{{ movies_json|escapejs }}');
+    const items = JSON.parse('{{ items_json|escapejs }}');
+
     /*
     // Test marker
     var marker = L.marker([33.774841, -84.396407]).addTo(map); // Location of CS2340 classroom
     marker.bindPopup("<b>The Dark Knight</b><br>25 sales")
 
-    // Test code for accessing orders and their regions
-    orders.forEach((element, index) => {
+    // Test code for accessing items and their regions
+    items.forEach((element, index) => {
         region = element.fields.region
         console.log(region);
         console.log(index)
     });
     */
+    
 
-    // Generate javascript object using JSON orders list
-    const orders = JSON.parse('{{ orders_json|escapejs }}');
+    // TODO: Create dictionary to hold trending movies for each region
+    // topmovies will hold arrays of [moviename, numsales] for the most sold movies in the region
+    var trending_movies = {
+        "AF": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},  // Africa
+        "AN": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},  // Antarctica
+        "AS": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},    // Asia
+        "EU": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},  // Europe
+        "NA": {"topmovie1": [null, 0],  "topmovie2": [null, 0]},  // North America
+        "OC": {"topmovie1": [null, 0],  "topmovie2": [null, 0]}, // Oceania
+        "SA": {"topmovie1": [null, 0],  "topmovie2": [null, 0]} // South America
+    };
+
+    // TODO: For each value in this dictionary, create a nested dict which iterates over movies
+    // and uses them as keys. Initial values all zero. Also has a key for top movie1 and 2.
+    for (var region in trending_movies) {
+        movies.forEach(movie => {
+            trending_movies[region][movie.fields.name] = 0;
+        });
+    }
+
+    // TODO: Iterate over the items, access the region -> movie and add 1 to that nested value
+    items.forEach(item => {
+        region = item.fields.region;
+        movieName = movies[item.fields.movie - 1].fields.name;
+        var x = ++trending_movies[region][movieName];  // increment counter
+        // If this new value is greater than topmovie1, put topmovie1 in topmovie2 and overwrite topmovie1
+        if (x > trending_movies[region]["topmovie1"][1]) {
+            trending_movies[region]["topmovie2"] = trending_movies[region]["topmovie1"]
+            trending_movies[region]["topmovie1"] = [movieName, x];
+        }
+        // else if greater than topmovie2 overwrite topmovie2
+        else if (x > trending_movies[region]["topmovie2"][1]) {
+            trending_movies[region]["topmovie2"] = [movieName, x];
+        }
+    });
+    
+
+    // TODO: For each marker, bind a popup to it.
+    // If null, popup says "No movies sold here yet."
+    // Otherwise, popup prints topmovie1 and 2 with sales number
+
 
     // Coordinates for region markers
     var region_coords = {
