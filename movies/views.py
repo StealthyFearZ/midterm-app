@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from cart.models import Order
+from cart.models import Item
 from .models import Movie, Review, Report
 from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
@@ -36,13 +36,15 @@ def show(request, id):
 @login_required
 def map(request):
     movies = Movie.objects.all()
-    orders = Order.objects.all()
+    items = Item.objects.all()
     template_data = {}
     template_data['title'] = 'Local Popularity Map'
     template_data['movies'] = movies
-    template_data['orders'] = orders
+    template_data['items'] = items
     return render(request, 'movies/map.html',
-                  {"orders_json": serialize("json", orders), 'template_data': template_data})
+                  {"movies_json": serialize("json", movies),
+                   "items_json": serialize("json", items),
+                   'template_data': template_data})
 
 @login_required
 def create_review(request, id):
